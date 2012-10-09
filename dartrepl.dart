@@ -2,7 +2,7 @@
 #import('dart:io');
 
 void main() {
-  final String prompt = '>> ';
+  const String prompt = '>> ';
   final StringInputStream stream = new StringInputStream(stdin);
   final List<String> lines = new List<String>();
 
@@ -10,33 +10,36 @@ void main() {
 
   final String dartvm = (new Options()).arguments[0];
 
-  print('$prompt');
+  stdout.writeString(prompt);
+  stdout.flush();
   stream.onLine = () {
     var line = stream.readLine();
     if (line != null) {
+      // TODO: Special commands for listing current program, inserting lines, etc.
+
       // add line to list
       lines.add(line);
 
       // write lines to file
       var tmpstream = tmpfile.openOutputStream(FileMode.WRITE);
-      lines.forEach((l) {
-        tmpstream.writeString(l);
-      });
+      lines.forEach((l) { tmpstream.writeString(l); });
       tmpstream.flush();
 
-      // Spawn DART VM process (from args?) with file as arg
+      // Spawn DART VM process with file as arg
       var p = Process.start(dartvm, [tmpfile.fullPathSync()]);
       var stdoutStream = new StringInputStream(p.stdout);
-      stdoutStream.onLine = () => print("<< ${stdoutStream.readLine()}");
+      stdoutStream.onLine = () => stdout.writeString("  << ${stdoutStream.readLine()}\n");
       p.onExit = (exitCode) {
         if (exitCode != 0) {
-          print('Compile error');
+          stdout.writeString('[error]\n');
+          lines.forEach((l) { stdout.writeString("  $l\n"); });
         } else {
-          print('Success');
+          stdout.writeString('[success]\n');
         }
         p.close();
+        stdout.writeString(prompt);
+        stdout.flush();
       };
     }
-    print('$prompt');
   };
 }
