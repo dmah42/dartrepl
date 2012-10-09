@@ -1,4 +1,5 @@
 dartrepl
 ========
 
-A REPL for the dart language
+A REPL for the dart language.
+
