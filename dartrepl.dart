@@ -26,20 +26,31 @@ void main() {
       tmpstream.flush();
 
       // Spawn DART VM process with file as arg
-      var p = Process.start(dartvm, [tmpfile.fullPathSync()]);
-      var stdoutStream = new StringInputStream(p.stdout);
-      stdoutStream.onLine = () => stdout.writeString("  << ${stdoutStream.readLine()}\n");
-      p.onExit = (exitCode) {
-        if (exitCode != 0) {
-          stdout.writeString('[error]\n');
-          lines.forEach((l) { stdout.writeString("  $l\n"); });
-        } else {
-          stdout.writeString('[success]\n');
-        }
-        p.close();
-        stdout.writeString(prompt);
-        stdout.flush();
-      };
+      Process.start(dartvm, [tmpfile.fullPathSync()])
+        ..then((p) => vm_running(p))
+        ..handleException((e) => vm_error(e));
     }
   };
+}
+
+void vm_running(Process p) {
+  var p = Process.start(dartvm, [tmpfile.fullPathSync()]);
+  var stdoutStream = new StringInputStream(p.stdout);
+  stdoutStream.onLine = () => stdout.writeString("  << ${stdoutStream.readLine()}\n");
+  p.onExit = (exitCode) {
+    if (exitCode != 0) {
+      stdout.writeString('[error]\n');
+      lines.forEach((l) { stdout.writeString("  $l\n"); });
+    } else {
+      stdout.writeString('[success]\n');
+    }
+    p.close();
+    stdout.writeString(prompt);
+    stdout.flush();
+  };
+}
+
+bool vm_error(Exception e) {
+  stderr.writeString('Failed to start VM: ${e.message}\n');
+  return true;
 }
