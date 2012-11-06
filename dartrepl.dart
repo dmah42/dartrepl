@@ -1,8 +1,9 @@
 #import('dart:core');
 #import('dart:io');
 
+const String prompt = '>> ';
+
 void main() {
-  const String prompt = '>> ';
   final StringInputStream stream = new StringInputStream(stdin);
   final List<String> lines = new List<String>();
 
@@ -27,14 +28,13 @@ void main() {
 
       // Spawn DART VM process with file as arg
       Process.start(dartvm, [tmpfile.fullPathSync()])
-        ..then((p) => vm_running(p))
+        ..then((p) => vm_running(p, lines))
         ..handleException((e) => vm_error(e));
     }
   };
 }
 
-void vm_running(Process p) {
-  var p = Process.start(dartvm, [tmpfile.fullPathSync()]);
+void vm_running(Process p, List<String> lines) {
   var stdoutStream = new StringInputStream(p.stdout);
   stdoutStream.onLine = () => stdout.writeString("  << ${stdoutStream.readLine()}\n");
   p.onExit = (exitCode) {
