@@ -3,12 +3,16 @@ dartrepl
 
 A REPL for the dart language.
 
-Run with:
-
-$DART_SDK/bin/dart dartrepl.dart &lt;path to VM&gt;
-
+Example usage:
+    c:\dart.exe dartrepl.dart
+    
+    >> main() => print("Hello World");
+      << Hello World
+    [success]
+    >> // todo, enter another command...!
 
 TODO
 ====
 
-Custom commands
+* Custom commands
+* Arbitary code
