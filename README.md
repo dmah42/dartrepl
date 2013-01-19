@@ -1,14 +1,21 @@
 dartrepl
 ========
 
-A REPL for the dart language.
+A REPL for the dart language.  Uses the same dart binary that is running 
+this app.
 
-Run with:
+Works with build 17072.
 
-$DART_SDK/bin/dart dartrepl.dart &lt;path to VM&gt;
-
+Example usage:
+    `c:\dart.exe dartrepl.dart`
+    
+    >> main() => print("Hello World");
+      << Hello World
+    [success]
+    >> // todo, enter another command...!
 
 TODO
 ====
 
-Custom commands
+* Custom commands
+* Arbitary code
