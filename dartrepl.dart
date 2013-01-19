@@ -1,5 +1,4 @@
-#import('dart:core');
-#import('dart:io');
+import 'dart:io';
 
 const String prompt = '>> ';
 
@@ -9,7 +8,7 @@ void main() {
 
   final File tmpfile = new File('.dartrepl');
 
-  final String dartvm = (new Options()).arguments[0];
+  final String dartvm = new Options().executable;
 
   stdout.writeString(prompt);
   stdout.flush();
@@ -29,7 +28,7 @@ void main() {
       // Spawn DART VM process with file as arg
       Process.start(dartvm, [tmpfile.fullPathSync()])
         ..then((p) => vm_running(p, lines))
-        ..handleException((e) => vm_error(e));
+        ..catchError((e) => vm_error(e));
     }
   };
 }
@@ -44,13 +43,13 @@ void vm_running(Process p, List<String> lines) {
     } else {
       stdout.writeString('[success]\n');
     }
-    p.close();
+    p.kill(ProcessSignal.SIGQUIT);
     stdout.writeString(prompt);
     stdout.flush();
   };
 }
 
-bool vm_error(Exception e) {
+bool vm_error(e) {
   stderr.writeString('Failed to start VM: ${e.message}\n');
   return true;
 }
