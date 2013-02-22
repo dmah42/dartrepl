@@ -1,10 +1,10 @@
 dartrepl
 ========
 
-A REPL for the dart language.  Uses the same dart binary that is running 
+A REPL for the dart language. Uses the same dart vm that is used to run
 this app.
 
-Works with build 17657.
+Works with build 17657 and some earlier. Untested with newer.
 
 Example usage:
     `<path-to-dart-sdk>/bin/dart dartrepl.dart`

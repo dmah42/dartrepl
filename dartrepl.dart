@@ -1,6 +1,7 @@
 import 'dart:io';
 
-const String prompt = '>> ';
+const String in_prompt = '>> ';
+const String out_prefix = '<< ';
 
 void main() {
   final StringInputStream stream = new StringInputStream(stdin);
@@ -8,7 +9,7 @@ void main() {
   final File tmpfile = new File('.dartrepl');
   final String dartvm = new Options().executable;
 
-  stdout.writeString(prompt);
+  stdout.writeString(in_prompt);
   stdout.flush();
   stream.onLine = () {
     var line = stream.readLine();
@@ -34,7 +35,7 @@ void main() {
 void vm_running(Process p, List<String> lines) {
   var stdoutStream = new StringInputStream(p.stdout);
   stdoutStream.onLine =
-      () => stdout.writeString("  << ${stdoutStream.readLine()}\n");
+      () => stdout.writeString("  $out_prefix ${stdoutStream.readLine()}\n");
   p.onExit = (exitCode) {
     if (exitCode != 0) {
       stderr.writeString('[error] ');
@@ -46,7 +47,7 @@ void vm_running(Process p, List<String> lines) {
     int i = 1;
     lines.forEach((l) { stdout.writeString(" $i. $l\n"); ++i; });
     p.kill(ProcessSignal.SIGQUIT);
-    stdout.writeString(prompt);
+    stdout.writeString(in_prompt);
     stdout.flush();
   };
 }
