@@ -44,7 +44,8 @@ void vm_running(Process p, List<String> lines) {
       stdout.writeString('[success]\n');
       lines.clear();
     }
-    lines.forEach((l) { stdout.writeString("  $l\n"); });
+    int i = 1;
+    lines.forEach((l) { stdout.writeString(" $i. $l\n"); ++i; });
     p.kill(ProcessSignal.SIGQUIT);
     stdout.writeString(prompt);
     stdout.flush();
