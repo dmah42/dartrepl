@@ -22,7 +22,7 @@ void main() {
 
       // write lines to file
       var tmpstream = tmpfile.openOutputStream(FileMode.WRITE);
-      lines.forEach((l) { tmpstream.writeString(l); });
+      lines.forEach((l) { tmpstream.writeString("$l\n"); });
       tmpstream.flush();
 
       // Spawn DART VM process with file as arg
@@ -38,11 +38,13 @@ void vm_running(Process p, List<String> lines) {
   stdoutStream.onLine = () => stdout.writeString("  << ${stdoutStream.readLine()}\n");
   p.onExit = (exitCode) {
     if (exitCode != 0) {
-      stdout.writeString('[error]\n');
-      lines.forEach((l) { stdout.writeString("  $l\n"); });
+      stderr.writeString('[error] ');
+      stderr.write(p.stderr.read());
     } else {
       stdout.writeString('[success]\n');
+      lines.clear();
     }
+    lines.forEach((l) { stdout.writeString("  $l\n"); });
     p.kill(ProcessSignal.SIGQUIT);
     stdout.writeString(prompt);
     stdout.flush();

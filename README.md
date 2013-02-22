@@ -7,7 +7,7 @@ this app.
 Works with build 17072.
 
 Example usage:
-    `c:\dart.exe dartrepl.dart`
+    `<path-to-dart-vm>/dart dartrepl.dart`
     
     >> main() => print("Hello World");
       << Hello World
