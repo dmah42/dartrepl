@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 const String in_prompt = '>> ';
@@ -6,13 +8,13 @@ const String out_prefix = '<< ';
 void main() {
   final List<String> lines = new List<String>();
   final File tmpfile = new File('.dartrepl');
-  final String dartvm = new Options().executable;
+  final String dartvm = Platform.executable;
 
   stdout.write(in_prompt);
   //stdout.flush();
   stdin
-    .transform(new StringDecoder())
-    .transform(new LineTransformer())
+    .transform(UTF8.decoder)
+    .transform(new LineSplitter())
     .listen((String line) {
         // TODO: Special commands for listing current program, editing lines, etc.
 
@@ -25,7 +27,7 @@ void main() {
         //tmpstream.flush();
 
         // Spawn DART VM process with file as arg
-        Process.start(dartvm, [tmpfile.fullPathSync()])
+        Process.start(dartvm, [tmpfile.path])
           ..then((p) => vm_running(p, lines))
           ..catchError((e) => vm_error(e));
     });
@@ -33,8 +35,8 @@ void main() {
 
 void vm_running(Process p, List<String> lines) {
   p.stdout
-    .transform(new StringDecoder())
-    .transform(new LineTransformer())
+    .transform(UTF8.decoder)
+    .transform(new LineSplitter())
     .listen((String line) {
         stdout.writeln("  $out_prefix $line");
     });
